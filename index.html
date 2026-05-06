@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Security · Summer '26 · Learning Hub</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+<!-- Animated canvas background -->
+<canvas id="bg-canvas"></canvas>
+
+<div class="site">
+
+<!-- ══════════════ TOP NAV ══════════════ -->
+<nav class="topnav">
+  <div class="nav-logo">
+    <span class="pill-sf">SF</span>
+    <span>Summer '26 · Apex Security</span>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="#overview">Overview</a>
+    <a class="nav-link" href="#usermode">User Mode Default</a>
+    <a class="nav-link" href="#secenforced">Security Enforced</a>
+    <a class="nav-link" href="#migration">Migration</a>
+    <a class="nav-link" href="#quiz">Knowledge Check</a>
+    <a class="nav-link" href="#resources">Resources</a>
+  </div>
+  <div class="nav-progress">
+    <svg class="nav-progress-ring" viewBox="0 0 32 32">
+      <circle class="ring-bg" cx="16" cy="16" r="13"/>
+      <circle class="ring-fill" id="ringFill" cx="16" cy="16" r="13"/>
+    </svg>
+    <span id="readPct">0%</span>
+  </div>
+</nav>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="hero" id="top">
+  <div class="hero-eyebrow">
+    <span class="live-dot"></span>
+    Preview · Summer '26 · API v67.0
+  </div>
+  <h1>
+    <span class="line1">Apex Security</span>
+    <span class="line2">Levels Up in Summer '26</span>
+  </h1>
+  <p class="hero-sub">Two breaking changes in API version 67.0 that every Salesforce developer needs to understand before the release hits production.</p>
+  <div class="hero-ctas">
+    <a class="btn-primary" href="#overview">Start Learning →</a>
+    <a class="btn-ghost" href="#migration">Jump to Migration</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="val">2</div><div class="key">Breaking Changes</div></div>
+    <div class="hero-stat"><div class="val">67.0</div><div class="key">First Affected API</div></div>
+    <div class="hero-stat"><div class="val">~10m</div><div class="key">Read Time</div></div>
+    <div class="hero-stat"><div class="val">1</div><div class="key">Keyword Fixes Both</div></div>
+  </div>
+  <div class="scroll-hint"><div class="scroll-chevron"></div>Scroll to begin</div>
+</section>
+
+<!-- ══════════════ OVERVIEW ══════════════ -->
+<div class="stripe-dark">
+<section class="section" id="overview">
+  <div class="module-header reveal">
+    <div class="module-num">01</div>
+    <div class="module-meta">
+      <strong>The Big Picture</strong>
+      <span>What's changing, why it matters, and the scope of impact</span>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label">Overview</div>
+    <h2 class="section-title">Salesforce's <span>"Secure by Default"</span> Shift</h2>
+    <p class="section-desc">For years, Apex database operations ran in <em>system mode</em> by default — silently bypassing object and field-level security. Summer '26 flips that default and removes the legacy clause that partially addressed it.</p>
+  </div>
+
+  <div class="card-grid card-grid-3" style="margin-top:40px;">
+    <div class="card reveal reveal-delay-1">
+      <div class="card-icon-wrap icon-blue">🔐</div>
+      <h3>User Mode by Default</h3>
+      <p>All Apex DB operations — SOQL, SOSL, DML, Database methods — now respect the running user's FLS, OLS, and sharing rules out of the box at API 67.0.</p>
+    </div>
+    <div class="card reveal reveal-delay-2">
+      <div class="card-icon-wrap icon-red">🚫</div>
+      <h3>WITH SECURITY_ENFORCED Removed</h3>
+      <p>Classes on API 67.0+ that still use <code class="inline">WITH SECURITY_ENFORCED</code> will fail to compile. Not a warning — a hard error.</p>
+    </div>
+    <div class="card reveal reveal-delay-3">
+      <div class="card-icon-wrap icon-green">✅</div>
+      <h3>One Fix for Both</h3>
+      <p>Replace <code class="inline">WITH SECURITY_ENFORCED</code> with <code class="inline">WITH USER_MODE</code>. That one swap resolves the compile error and aligns with the new default behaviour.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:48px;">
+    <div class="reveal">
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:20px;">What Changes at API 67.0</h3>
+    </div>
+    <div class="compare-wrap reveal">
+      <table class="compare">
+        <thead><tr><th>Area</th><th>API ≤ 66.0</th><th>API 67.0+</th></tr></thead>
+        <tbody>
+          <tr><td class="label">SOQL / SOSL default mode</td><td class="bad">System (bypasses FLS &amp; OLS)</td><td class="good">User (enforces FLS &amp; OLS)</td></tr>
+          <tr><td class="label">DML default mode</td><td class="bad">System</td><td class="good">User</td></tr>
+          <tr><td class="label">Database / Search methods</td><td class="bad">System</td><td class="good">User</td></tr>
+          <tr><td class="label">WITH SECURITY_ENFORCED</td><td>Supported (first FLS error only)</td><td class="crit">Compile ERROR — removed</td></tr>
+          <tr><td class="label">Polymorphic field support</td><td class="bad">❌ With SECURITY_ENFORCED</td><td class="good">✅ Full via USER_MODE</td></tr>
+          <tr><td class="label">All FLS errors visible</td><td class="bad">❌ Only first</td><td class="good">✅ via getInaccessibleFields()</td></tr>
+          <tr><td class="label">System mode opt-in</td><td>Implicit (no keyword needed)</td><td class="good">Explicit: WITH SYSTEM_MODE / as system</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="margin-top:48px; display:grid; grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); gap:32px;">
+    <div class="reveal">
+      <h3 style="font-size:17px;font-weight:700;margin-bottom:20px;">Impact Assessment</h3>
+      <div class="impact-item">
+        <div class="impact-header">
+          <span class="impact-label">Code using WITH SECURITY_ENFORCED</span>
+          <span class="impact-level" style="color:#ef4444">Critical</span>
+        </div>
+        <div class="impact-bg"><div class="impact-fill fill-crit" data-w="96"></div></div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-header">
+          <span class="impact-label">Implicit system-mode SOQL</span>
+          <span class="impact-level" style="color:#f59e0b">High</span>
+        </div>
+        <div class="impact-bg"><div class="impact-fill fill-high" data-w="78"></div></div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-header">
+          <span class="impact-label">DML without access mode</span>
+          <span class="impact-level" style="color:#3b82f6">Medium</span>
+        </div>
+        <div class="impact-bg"><div class="impact-fill fill-medium" data-w="55"></div></div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-header">
+          <span class="impact-label">Code already using USER_MODE</span>
+          <span class="impact-level" style="color:#10b981">None</span>
+        </div>
+        <div class="impact-bg"><div class="impact-fill fill-low" data-w="5"></div></div>
+      </div>
+    </div>
+
+    <div class="reveal reveal-delay-1">
+      <h3 style="font-size:17px;font-weight:700;margin-bottom:20px;">Release Timeline</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot done">✓</div><div class="tl-line"></div></div>
+          <div class="tl-body"><span class="tl-date">API 56.0 — Spring '23</span><strong>USER_MODE &amp; SYSTEM_MODE Introduced</strong><span>Optional explicit keywords available. Recommended as best practice.</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot active">●</div><div class="tl-line"></div></div>
+          <div class="tl-body"><span class="tl-date">Now — Summer '26 Preview</span><strong>Sandbox Preview Available</strong><span>Audit and update your code. Test in preview orgs before GA.</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot future">!</div></div>
+          <div class="tl-body"><span class="tl-date">GA — Summer '26 (API 67.0)</span><strong>Breaking Changes Take Effect</strong><span>User mode is default. WITH SECURITY_ENFORCED causes compile failure.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════ MODULE 2: USER MODE ══════════════ -->
+<section class="section" id="usermode">
+  <div class="module-header reveal">
+    <div class="module-num">02</div>
+    <div class="module-meta">
+      <strong>Database Operations Run in User Mode by Default</strong>
+      <span>Understanding the mode shift and how to adapt</span>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label">Change 1 of 2</div>
+    <h2 class="section-title">The Default <span>Mode Flip</span></h2>
+    <p class="section-desc">Any Apex class compiled at API 67.0+ will default all database operations to user mode. This enforces field-level security, object permissions, and sharing rules — no additional code required.</p>
+  </div>
+
+  <div class="callout callout-warn reveal" style="margin-top:28px;">
+    <span class="callout-icon">⚠️</span>
+    <div><strong>Preview Notice:</strong> This is a versioned change. Classes remaining on API ≤ 66.0 are completely unaffected. Only bump API versions intentionally for classes that you have tested and updated.</div>
+  </div>
+
+  <div style="margin-top:40px;">
+    <div class="tab-bar reveal">
+      <button class="tab-btn active" onclick="switchTab('soql','mode-tabs')">SOQL / SOSL</button>
+      <button class="tab-btn" onclick="switchTab('dml','mode-tabs')">DML</button>
+      <button class="tab-btn" onclick="switchTab('dbmethod','mode-tabs')">Database Methods</button>
+    </div>
+
+    <div id="mode-tabs">
+      <div class="tab-panel active" data-tab="soql">
+        <div class="code-wrap reveal">
+          <div class="code-bar">
+            <div class="code-dots"><span class="cd-r"></span><span class="cd-y"></span><span class="cd-g"></span></div>
+            <span class="code-filename">AccountQuery.cls</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-body">
+            <div class="diff-line del"><span class="diff-sign">−</span><span class="diff-content">// ❌ API ≤ 66.0: implicit system mode — bypasses FLS and OLS
+Account acc = [SELECT Id, Name, AnnualRevenue__c FROM Account WHERE Name = 'Acme' LIMIT 1];</span></div>
+            <div class="diff-line add"><span class="diff-sign">+</span><span class="diff-content">// ✅ API 67.0+: explicit user mode (enforces permissions)
+Account acc = [SELECT Id, Name FROM Account WHERE Name = 'Acme' WITH USER_MODE LIMIT 1];</span></div>
+            <div class="diff-line ctx"><span class="diff-sign"> </span><span class="diff-content"></span></div>
+            <div class="diff-line add"><span class="diff-sign">+</span><span class="diff-content">// ✅ When system-level access is truly needed (must be intentional)
+Account acc = [SELECT Id, Name FROM Account WHERE Name = 'Acme' WITH SYSTEM_MODE LIMIT 1];</span></div>
+          </div>
+        </div>
+        <div class="callout callout-info reveal">
+          <span class="callout-icon">💡</span>
+          <div>At API 67.0, any SOQL written without an explicit clause behaves the same as writing <code class="inline">WITH USER_MODE</code>. The recommendation is to always be explicit — it signals intent during code review and is immune to future default changes.</div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-tab="dml">
+        <div class="code-wrap reveal">
+          <div class="code-bar">
+            <div class="code-dots"><span class="cd-r"></span><span class="cd-y"></span><span class="cd-g"></span></div>
+            <span class="code-filename">AccountService.cls</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-body">
+            <div class="diff-line del"><span class="diff-sign">−</span><span class="diff-content">update a;            // ❌ implicit system mode</span></div>
+            <div class="diff-line del"><span class="diff-sign">−</span><span class="diff-content">insert newAccount;   // ❌ implicit system mode</span></div>
+            <div class="diff-line ctx"><span class="diff-sign"> </span><span class="diff-content"></span></div>
+            <div class="diff-line add"><span class="diff-sign">+</span><span class="diff-content">update as user a;          // ✅ explicit user mode</span></div>
+            <div class="diff-line add"><span class="diff-sign">+</span><span class="diff-content">insert as user newAccount; // ✅ explicit user mode</span></div>
+            <div class="diff-line add"><span class="diff-sign">+</span><span class="diff-content">delete as system oldLog;   // ✅ explicit system — only when justified</span></div>
+          </div>
+        </div>
+        <div class="code-wrap reveal" style="margin-top:16px;">
+          <div class="code-bar">
+            <div class="code-dots"><span class="cd-r"></span><span class="cd-y"></span><span class="cd-g"></span></div>
+            <span class="code-filename">Full DML Example</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-body"><pre><span class="t-cls">Account</span> a = [<span class="t-kw">SELECT</span> Id, Name
+   <span class="t-kw">FROM</span> <span class="t-cls">Account</span>
+   <span class="t-kw">WHERE</span> Support__c = <span class="t-str">'Premier'</span>
+   <span class="t-kw">WITH USER_MODE</span>];
+
+a.Rating = <span class="t-str">'Hot'</span>;
+<span class="t-kw">update as user</span> a;</pre></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-tab="dbmethod">
+        <div class="code-wrap reveal">
+          <div class="code-bar">
+            <div class="code-dots"><span class="cd-r"></span><span class="cd-y"></span><span class="cd-g"></span></div>
+            <span class="code-filename">DynamicQuery.cls</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-body">
+            <div class="diff-line del"><span class="diff-sign">−</span><span class="diff-content">// ❌ No AccessLevel — implicit system mode
+Database.query('SELECT Id, Name FROM Account WHERE Rating = \'Hot\'');</span></div>
+            <div class="diff-line ctx"><span class="diff-sign"> </span><span class="diff-content"></span></div>
+            <div class="diff-line add"><span class="diff-sign">+</span><span class="diff-content">// ✅ Explicit user mode
+List&lt;Account&gt; results = Database.query(
+    'SELECT Id, Name FROM Account WHERE Rating = \'Hot\'',
+    AccessLevel.USER_MODE
+);</span></div>
+            <div class="diff-line ctx"><span class="diff-sign"> </span><span class="diff-content"></span></div>
+            <div class="diff-line add"><span class="diff-sign">+</span><span class="diff-content">// ✅ Search methods — same pattern
+List&lt;List&lt;SObject&gt;&gt; sr = Search.query(
+    'FIND {Acme} IN ALL FIELDS RETURNING Account(Id, Name)',
+    AccessLevel.USER_MODE
+);</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:48px;">
+    <h3 class="reveal" style="font-size:18px;font-weight:700;margin-bottom:20px;">Key Behaviours &amp; Gotchas</h3>
+    <div class="accordion reveal">
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)">USER_MODE overrides the class sharing declaration <span class="acc-arrow">▼</span></button>
+        <div class="acc-body">If you write <code>WITH USER_MODE</code> on a query inside a class declared <code>without sharing</code>, the operation still respects the running user's sharing rules. User mode is a stronger signal than the class-level <code>without sharing</code> keyword. This can expose fewer records than expected to privileged service classes.</div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)">SYSTEM_MODE defers to the class sharing declaration <span class="acc-arrow">▼</span></button>
+        <div class="acc-body">With <code>WITH SYSTEM_MODE</code>, field-level and object-level access is bypassed, but record-level visibility is controlled by the enclosing class's <code>with sharing</code> / <code>without sharing</code> / <code>inherited sharing</code> declaration — not the user.</div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)">Classes on API ≤ 66.0 are completely unaffected <span class="acc-arrow">▼</span></button>
+        <div class="acc-body">This is a versioned change. Apex classes compiled at API version 66.0 or below continue to default to system mode, exactly as before. You control the upgrade — migrate and test each class intentionally.</div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)">Best practice: be explicit on every operation <span class="acc-arrow">▼</span></button>
+        <div class="acc-body">Salesforce recommends always writing <code>WITH USER_MODE</code> or <code>WITH SYSTEM_MODE</code> explicitly — even in classes already on API 67.0. Explicit intent makes security reviews trivial and protects against future default changes.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ MODULE 3: SECURITY_ENFORCED ══════════════ -->
+<div class="stripe-dark">
+<section class="section" id="secenforced">
+  <div class="module-header reveal">
+    <div class="module-num">03</div>
+    <div class="module-meta">
+      <strong>WITH SECURITY_ENFORCED is Removed</strong>
+      <span>Hard compile error at API 67.0 — and why the replacement is better</span>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label">Change 2 of 2</div>
+    <h2 class="section-title">Compile Error — <span>Not a Warning</span></h2>
+    <p class="section-desc">Apex classes set to API version 67.0 or later that include <code class="inline">WITH SECURITY_ENFORCED</code> will refuse to compile. Your deployment will fail. This is by design — the replacement is <code class="inline">WITH USER_MODE</code>.</p>
+  </div>
+
+  <div class="callout callout-error reveal" style="margin-top:28px;">
+    <span class="callout-icon">🚨</span>
+    <div><strong>This is your highest-priority fix.</strong> Runtime errors can be caught in testing. A compile error blocks deployment entirely. Find and replace every instance before upgrading API versions.</div>
+  </div>
+
+  <div class="code-wrap reveal" style="margin-top:28px;">
+    <div class="code-bar">
+      <div class="code-dots"><span class="cd-r"></span><span class="cd-y"></span><span class="cd-g"></span></div>
+      <span class="code-filename">The fix — one keyword swap</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <div class="code-body">
+      <div class="diff-line del"><span class="diff-sign">−</span><span class="diff-content">// ❌ API 67.0+: COMPILE ERROR
+Account acc = [SELECT Id FROM Account WHERE Name = 'Acme' WITH SECURITY_ENFORCED LIMIT 1];</span></div>
+      <div class="diff-line add"><span class="diff-sign">+</span><span class="diff-content">// ✅ API 67.0+: compiles and enforces full user permissions
+Account acc = [SELECT Id FROM Account WHERE Name = 'Acme' WITH USER_MODE LIMIT 1];</span></div>
+    </div>
+  </div>
+
+  <div style="margin-top:48px;">
+    <h3 class="reveal" style="font-size:18px;font-weight:700;margin-bottom:20px;">Why USER_MODE is Strictly Better</h3>
+    <div class="compare-wrap reveal">
+      <table class="compare">
+        <thead><tr><th>Capability</th><th>WITH SECURITY_ENFORCED</th><th>WITH USER_MODE</th></tr></thead>
+        <tbody>
+          <tr><td class="label">Polymorphic fields<br><small style="color:var(--text3)">(Owner, Task.WhatId, etc.)</small></td><td class="bad">❌ Not handled correctly</td><td class="good">✅ Fully supported</td></tr>
+          <tr><td class="label">WHERE clause FLS enforcement</td><td class="bad">❌ SELECT only</td><td class="good">✅ All clauses incl. WHERE</td></tr>
+          <tr><td class="label">Error visibility</td><td class="bad">❌ First error only</td><td class="good">✅ All errors via getInaccessibleFields()</td></tr>
+          <tr><td class="label">Record-level sharing</td><td class="bad">Object/field only</td><td class="good">✅ Full: object + field + record</td></tr>
+          <tr><td class="label">DML &amp; Database methods</td><td class="bad">❌ SOQL/SOSL only</td><td class="good">✅ All operation types</td></tr>
+          <tr><td class="label">Compiles at API v67.0</td><td class="crit">❌ COMPILE ERROR</td><td class="good">✅ Compiles fine</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="margin-top:40px;">
+    <h3 class="reveal" style="font-size:18px;font-weight:700;margin-bottom:16px;">Bonus: See All FLS Errors at Once</h3>
+    <p class="reveal" style="color:var(--text2);font-size:14px;margin-bottom:16px;">With <code class="inline">WITH SECURITY_ENFORCED</code> you only ever saw the first inaccessible field. With <code class="inline">WITH USER_MODE</code> you can inspect every inaccessible field in one go using <code class="inline">getInaccessibleFields()</code>.</p>
+    <div class="code-wrap reveal">
+      <div class="code-bar">
+        <div class="code-dots"><span class="cd-r"></span><span class="cd-y"></span><span class="cd-g"></span></div>
+        <span class="code-filename">FLS error inspection with USER_MODE</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="t-kw">try</span> {
+    <span class="t-cls">List</span>&lt;<span class="t-cls">Account</span>&gt; accs = [
+        <span class="t-kw">SELECT</span> Id, Name, AnnualRevenue, Weird_Field__c
+        <span class="t-kw">FROM</span> <span class="t-cls">Account</span>
+        <span class="t-kw">WITH USER_MODE</span>
+    ];
+} <span class="t-kw">catch</span> (<span class="t-cls">QueryException</span> e) {
+    <span class="t-cmt">// Returns ALL fields the user cannot access, not just the first</span>
+    <span class="t-cls">Map</span>&lt;<span class="t-cls">String</span>, <span class="t-cls">Set</span>&lt;<span class="t-cls">String</span>&gt;&gt; blocked = e.<span class="t-fn">getInaccessibleFields</span>();
+    <span class="t-kw">for</span> (<span class="t-cls">String</span> obj : blocked.<span class="t-fn">keySet</span>()) {
+        <span class="t-cls">System</span>.<span class="t-fn">debug</span>(<span class="t-str">'Object: '</span> + obj + <span class="t-str">' | Blocked fields: '</span> + blocked.<span class="t-fn">get</span>(obj));
+    }
+}</pre></div>
+    </div>
+  </div>
+
+  <div style="margin-top:36px;">
+    <h3 class="reveal" style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Find All Instances</h3>
+    <div class="code-wrap reveal">
+      <div class="code-bar">
+        <div class="code-dots"><span class="cd-r"></span><span class="cd-y"></span><span class="cd-g"></span></div>
+        <span class="code-filename">Terminal — audit your codebase</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="t-cmt"># Find every occurrence in your SFDX project</span>
+grep -rn <span class="t-str">"WITH SECURITY_ENFORCED"</span> force-app/
+
+<span class="t-cmt"># Count how many files are affected</span>
+grep -rl <span class="t-str">"WITH SECURITY_ENFORCED"</span> force-app/ | wc -l
+
+<span class="t-cmt"># VSCode bulk replace (use Cmd+Shift+H on Mac / Ctrl+Shift+H on Windows)</span>
+<span class="t-cmt"># Find:    WITH SECURITY_ENFORCED</span>
+<span class="t-cmt"># Replace: WITH USER_MODE</span></pre></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════ MIGRATION ══════════════ -->
+<section class="section" id="migration">
+  <div class="module-header reveal">
+    <div class="module-num">04</div>
+    <div class="module-meta">
+      <strong>Migration Checklist</strong>
+      <span>Track your team's progress — state saved in your browser</span>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label">Action Plan</div>
+    <h2 class="section-title">Your <span>Migration Playbook</span></h2>
+    <p class="section-desc">Click each item to mark it done. Progress is saved locally per browser so each team member can track independently.</p>
+  </div>
+
+  <div class="prog-wrap reveal" style="margin-top:32px;">
+    <div class="prog-header">
+      <span class="prog-title">Migration Progress</span>
+      <span class="prog-pct" id="checkPct">0% complete</span>
+    </div>
+    <div class="prog-bar-bg"><div class="prog-bar" id="checkBar" style="width:0%"></div></div>
+  </div>
+
+  <ul class="checklist reveal" id="migList">
+    <li class="check-item" onclick="toggleCheck(this)" data-id="m1">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Audit for WITH SECURITY_ENFORCED</strong>
+        <span>Run <code>grep -rn "WITH SECURITY_ENFORCED" force-app/</code> in your terminal. List every file — this is your compile-error hit list.</span>
+      </div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)" data-id="m2">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Replace all WITH SECURITY_ENFORCED → WITH USER_MODE</strong>
+        <span>VSCode: Cmd+Shift+H (Mac) / Ctrl+Shift+H (Win). This is the single highest-priority fix — it eliminates compile failures at v67.0.</span>
+      </div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)" data-id="m3">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Decide which classes to upgrade to API 67.0</strong>
+        <span>Classes staying on v66.0 or below are unaffected. Upgrade intentionally — not en masse. Prioritise classes that handle sensitive data.</span>
+      </div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)" data-id="m4">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Add explicit access modes to all SOQL/SOSL in v67.0 classes</strong>
+        <span>Add <code>WITH USER_MODE</code> or <code>WITH SYSTEM_MODE</code> on every query. Don't rely on the new implicit default — make intent visible.</span>
+      </div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)" data-id="m5">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Add as user / as system to all DML in v67.0 classes</strong>
+        <span>e.g. <code>insert as user rec;</code> — explicit access mode on every DML statement future-proofs against further default changes.</span>
+      </div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)" data-id="m6">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Update Database / Search method calls with AccessLevel parameter</strong>
+        <span><code>Database.query(soql, AccessLevel.USER_MODE)</code> — same for Database.insert, Database.update, Search.query, etc.</span>
+      </div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)" data-id="m7">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Review classes declared without sharing</strong>
+        <span>USER_MODE overrides <code>without sharing</code>. Make sure any service class that intentionally bypasses sharing uses <code>WITH SYSTEM_MODE</code> and documents why.</span>
+      </div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)" data-id="m8">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Run full Apex test suite in a Summer '26 preview sandbox</strong>
+        <span>Deploy updated code, run all tests, and monitor for unexpected QueryException or DML permission errors before production GA.</span>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ══════════════ QUIZ ══════════════ -->
+<div class="stripe-dark">
+<section class="section" id="quiz">
+  <div class="module-header reveal">
+    <div class="module-num">05</div>
+    <div class="module-meta">
+      <strong>Knowledge Check</strong>
+      <span>Test what you've learned</span>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label">Quiz</div>
+    <h2 class="section-title">Test Your <span>Understanding</span></h2>
+    <p class="section-desc">5 questions covering both changes. Answers are explained as you go.</p>
+  </div>
+
+  <div id="quiz-body" style="margin-top:36px;">
+    <div class="quiz-card reveal" id="q1">
+      <div class="quiz-q"><span class="q-num">Question 1 of 5</span>At API version 67.0, what happens if you deploy an Apex class that contains the clause <code class="inline">WITH SECURITY_ENFORCED</code>?</div>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="answerQ('q1',this,false,'A')"><div class="opt-letter">A</div>It runs but logs a deprecation warning</div>
+        <div class="quiz-opt" onclick="answerQ('q1',this,true,'B')"><div class="opt-letter">B</div>The class fails to compile — deployment is blocked</div>
+        <div class="quiz-opt" onclick="answerQ('q1',this,false,'C')"><div class="opt-letter">C</div>It runs in user mode automatically</div>
+        <div class="quiz-opt" onclick="answerQ('q1',this,false,'D')"><div class="opt-letter">D</div>It only fails at runtime, not compile time</div>
+      </div>
+      <div class="quiz-explanation" id="exp-q1"><strong>Correct — B.</strong> <code class="inline">WITH SECURITY_ENFORCED</code> is removed from the Apex compiler in API 67.0. Any class referencing it will fail to compile entirely. This is not a runtime warning — it blocks deployment.</div>
+    </div>
+
+    <div class="quiz-card reveal" id="q2">
+      <div class="quiz-q"><span class="q-num">Question 2 of 5</span>A developer has a SOQL query in a class declared <code class="inline">without sharing</code>. They add <code class="inline">WITH USER_MODE</code> to the query. What does this change?</div>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="answerQ('q2',this,false,'A')"><div class="opt-letter">A</div>Nothing — <code class="inline">without sharing</code> takes precedence</div>
+        <div class="quiz-opt" onclick="answerQ('q2',this,false,'B')"><div class="opt-letter">B</div>Only field-level security is enforced; record-level is still bypassed</div>
+        <div class="quiz-opt" onclick="answerQ('q2',this,true,'C')"><div class="opt-letter">C</div>The query now enforces the running user's sharing rules, overriding the class declaration</div>
+        <div class="quiz-opt" onclick="answerQ('q2',this,false,'D')"><div class="opt-letter">D</div>It causes a compile error inside a <code class="inline">without sharing</code> class</div>
+      </div>
+      <div class="quiz-explanation" id="exp-q2"><strong>Correct — C.</strong> <code>WITH USER_MODE</code> on an operation is a stronger signal than the class-level <code>without sharing</code> declaration. The query will respect the running user's record-level sharing rules regardless of the class's sharing setting.</div>
+    </div>
+
+    <div class="quiz-card reveal" id="q3">
+      <div class="quiz-q"><span class="q-num">Question 3 of 5</span>Which advantage does <code class="inline">WITH USER_MODE</code> have over <code class="inline">WITH SECURITY_ENFORCED</code> regarding FLS errors?</div>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="answerQ('q3',this,false,'A')"><div class="opt-letter">A</div>USER_MODE skips FLS checks entirely for better performance</div>
+        <div class="quiz-opt" onclick="answerQ('q3',this,true,'B')"><div class="opt-letter">B</div>USER_MODE surfaces all FLS errors; SECURITY_ENFORCED only surfaces the first</div>
+        <div class="quiz-opt" onclick="answerQ('q3',this,false,'C')"><div class="opt-letter">C</div>USER_MODE throws a different exception type</div>
+        <div class="quiz-opt" onclick="answerQ('q3',this,false,'D')"><div class="opt-letter">D</div>They behave identically for FLS</div>
+      </div>
+      <div class="quiz-explanation" id="exp-q3"><strong>Correct — B.</strong> <code>WITH SECURITY_ENFORCED</code> halts on the very first inaccessible field. <code>WITH USER_MODE</code> continues evaluating and collects all inaccessible fields, which you can then inspect via <code>QueryException.getInaccessibleFields()</code>.</div>
+    </div>
+
+    <div class="quiz-card reveal" id="q4">
+      <div class="quiz-q"><span class="q-num">Question 4 of 5</span>Which of the following correctly sets user mode on a <code class="inline">Database.query()</code> call?</div>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="answerQ('q4',this,false,'A')"><div class="opt-letter">A</div><code class="inline">Database.query(soql, 'USER_MODE')</code></div>
+        <div class="quiz-opt" onclick="answerQ('q4',this,false,'B')"><div class="opt-letter">B</div><code class="inline">Database.query(soql WITH USER_MODE)</code></div>
+        <div class="quiz-opt" onclick="answerQ('q4',this,true,'C')"><div class="opt-letter">C</div><code class="inline">Database.query(soql, AccessLevel.USER_MODE)</code></div>
+        <div class="quiz-opt" onclick="answerQ('q4',this,false,'D')"><div class="opt-letter">D</div><code class="inline">Database.queryAsUser(soql)</code></div>
+      </div>
+      <div class="quiz-explanation" id="exp-q4"><strong>Correct — C.</strong> Database and Search methods accept an <code>AccessLevel</code> enum parameter as their second argument. The valid values are <code>AccessLevel.USER_MODE</code> and <code>AccessLevel.SYSTEM_MODE</code>.</div>
+    </div>
+
+    <div class="quiz-card reveal" id="q5">
+      <div class="quiz-q"><span class="q-num">Question 5 of 5</span>A team has 50 Apex classes all on API version 64.0. They upgrade two of them to API 67.0. What is the impact on the other 48 classes?</div>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="answerQ('q5',this,false,'A')"><div class="opt-letter">A</div>They all automatically inherit the new user-mode default</div>
+        <div class="quiz-opt" onclick="answerQ('q5',this,false,'B')"><div class="opt-letter">B</div>They fail at runtime on the next execution</div>
+        <div class="quiz-opt" onclick="answerQ('q5',this,true,'C')"><div class="opt-letter">C</div>They are completely unaffected — the change is versioned per class</div>
+        <div class="quiz-opt" onclick="answerQ('q5',this,false,'D')"><div class="opt-letter">D</div>They generate compiler warnings but continue to work</div>
+      </div>
+      <div class="quiz-explanation" id="exp-q5"><strong>Correct — C.</strong> This is a versioned change. Each Apex class independently governs its own API version. Classes on API 64.0 continue to default to system mode as before. Only classes explicitly bumped to API 67.0+ are subject to the new rules.</div>
+    </div>
+  </div>
+
+  <div class="quiz-score glass reveal" id="quizScore" style="margin-top:24px;">
+    <div class="score-val" id="scoreVal">—</div>
+    <p id="scoreMsg">Complete all 5 questions to see your score.</p>
+    <button class="btn-ghost" onclick="resetQuiz()" style="margin-top:20px;">Retake Quiz</button>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════ RESOURCES ══════════════ -->
+<section class="section" id="resources">
+  <div class="module-header reveal">
+    <div class="module-num">06</div>
+    <div class="module-meta">
+      <strong>Resources &amp; Further Reading</strong>
+      <span>Everything you need to go deeper</span>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label">References</div>
+    <h2 class="section-title">Learn <span>More &amp; Go Deeper</span></h2>
+    <p class="section-desc">Official documentation, Trailhead modules, community posts, and tooling to help your team prepare.</p>
+  </div>
+
+  <div style="margin-top:36px;">
+    <h3 class="reveal" style="font-size:15px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:16px;">Official Release Notes</h3>
+    <div class="card-grid card-grid-2 reveal">
+      <a class="resource-card" href="https://help.salesforce.com/s/articleView?id=release-notes.rn_apex_default_user_mode.htm&release=262&type=5" target="_blank" rel="noopener">
+        <div class="resource-icon icon-blue">📄</div>
+        <div class="resource-body">
+          <div class="resource-title">Database Operations Run in User Mode by Default</div>
+          <div class="resource-desc">Official Summer '26 release note covering the mode default change, code examples, and API version details.</div>
+          <div class="resource-meta"><span class="badge badge-blue">Release Note</span><span class="badge badge-orange">API 67.0</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+      <a class="resource-card" href="https://help.salesforce.com/s/articleView?id=release-notes.rn_apex_removed_withSecurityEnforced.htm&release=262&type=5" target="_blank" rel="noopener">
+        <div class="resource-icon icon-red">🚫</div>
+        <div class="resource-body">
+          <div class="resource-title">WITH SECURITY_ENFORCED Clause Removed</div>
+          <div class="resource-desc">Official release note detailing the removal, migration path, and advantages of the replacement clause.</div>
+          <div class="resource-meta"><span class="badge badge-red">Breaking Change</span><span class="badge badge-orange">API 67.0</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+    </div>
+
+    <h3 class="reveal" style="font-size:15px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:16px;margin-top:36px;">Apex Developer Guide</h3>
+    <div class="card-grid card-grid-2 reveal">
+      <a class="resource-card" href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_enforcing_crud_fls.htm" target="_blank" rel="noopener">
+        <div class="resource-icon icon-purple">📘</div>
+        <div class="resource-body">
+          <div class="resource-title">Enforcing CRUD and FLS in Apex</div>
+          <div class="resource-desc">Comprehensive guide on all approaches to enforce object and field permissions in Apex — with and without sharing, stripInaccessible, and the access mode keywords.</div>
+          <div class="resource-meta"><span class="badge badge-purple">Dev Guide</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+      <a class="resource-card" href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_security_sharing_chapter.htm" target="_blank" rel="noopener">
+        <div class="resource-icon icon-purple">🔒</div>
+        <div class="resource-body">
+          <div class="resource-title">Apex Security and Sharing</div>
+          <div class="resource-desc">Deep dive into Apex sharing architecture — with sharing, without sharing, inherited sharing, and how they interact with operation-level access modes.</div>
+          <div class="resource-meta"><span class="badge badge-purple">Dev Guide</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+      <a class="resource-card" href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_with_security_enforced.htm" target="_blank" rel="noopener">
+        <div class="resource-icon icon-cyan">🔍</div>
+        <div class="resource-body">
+          <div class="resource-title">User Mode and System Mode for Database Operations</div>
+          <div class="resource-desc">Reference page for the USER_MODE and SYSTEM_MODE keywords, AccessLevel enum, and how access modes interact with sharing declarations.</div>
+          <div class="resource-meta"><span class="badge badge-blue">Reference</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+      <a class="resource-card" href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_methods_system_database.htm" target="_blank" rel="noopener">
+        <div class="resource-icon icon-cyan">🗄️</div>
+        <div class="resource-body">
+          <div class="resource-title">Database Class Methods Reference</div>
+          <div class="resource-desc">Full signature reference for Database.query, Database.insert, Database.update, and all other methods — including the AccessLevel parameter overloads.</div>
+          <div class="resource-meta"><span class="badge badge-blue">Reference</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+    </div>
+
+    <h3 class="reveal" style="font-size:15px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:16px;margin-top:36px;">Trailhead</h3>
+    <div class="card-grid card-grid-2 reveal">
+      <a class="resource-card" href="https://trailhead.salesforce.com/content/learn/modules/apex_basics_dotnet/apex_basics_dotnet_security" target="_blank" rel="noopener">
+        <div class="resource-icon icon-green">🥾</div>
+        <div class="resource-body">
+          <div class="resource-title">Apex Security — Trailhead Module</div>
+          <div class="resource-desc">Hands-on guided learning covering Apex security fundamentals including sharing rules, CRUD, FLS, and access mode keywords.</div>
+          <div class="resource-meta"><span class="badge badge-green">Trailhead</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+      <a class="resource-card" href="https://trailhead.salesforce.com/content/learn/modules/data_security" target="_blank" rel="noopener">
+        <div class="resource-icon icon-green">🛡️</div>
+        <div class="resource-body">
+          <div class="resource-title">Data Security Module</div>
+          <div class="resource-desc">Learn how Salesforce's layered security model works end to end — from org-level down to record and field level — with exercises.</div>
+          <div class="resource-meta"><span class="badge badge-green">Trailhead</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+    </div>
+
+    <h3 class="reveal" style="font-size:15px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:16px;margin-top:36px;">Community &amp; Blog Posts</h3>
+    <div class="card-grid card-grid-2 reveal">
+      <a class="resource-card" href="https://developer.salesforce.com/blogs/2022/01/field-level-security-for-soql-queries-in-user-mode" target="_blank" rel="noopener">
+        <div class="resource-icon icon-orange">✍️</div>
+        <div class="resource-body">
+          <div class="resource-title">Field-Level Security for SOQL in User Mode</div>
+          <div class="resource-desc">Salesforce Developer Blog deep dive on how USER_MODE was designed, what problems it solves, and patterns for adopting it incrementally.</div>
+          <div class="resource-meta"><span class="badge badge-orange">Blog Post</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+      <a class="resource-card" href="https://developer.salesforce.com/docs/atlas.en-us.salesforce_app_limits_cheatsheet.meta/salesforce_app_limits_cheatsheet/salesforce_app_limits_apex_security.htm" target="_blank" rel="noopener">
+        <div class="resource-icon icon-orange">📋</div>
+        <div class="resource-body">
+          <div class="resource-title">Apex Security Limits &amp; Considerations</div>
+          <div class="resource-desc">Quick-reference cheat sheet for Apex security-related governor limits, SOQL FLS considerations, and performance impact of security enforcement.</div>
+          <div class="resource-meta"><span class="badge badge-orange">Reference</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+    </div>
+
+    <h3 class="reveal" style="font-size:15px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:16px;margin-top:36px;">Tooling</h3>
+    <div class="card-grid card-grid-2 reveal">
+      <a class="resource-card" href="https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode" target="_blank" rel="noopener">
+        <div class="resource-icon icon-blue">🔧</div>
+        <div class="resource-body">
+          <div class="resource-title">Salesforce Extension Pack for VS Code</div>
+          <div class="resource-desc">Official VS Code extension with Apex language server, inline diagnostics for security issues, and built-in org management for testing your migrations.</div>
+          <div class="resource-meta"><span class="badge badge-blue">Tooling</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+      <a class="resource-card" href="https://pmd.github.io/pmd/pmd_rules_apex_security.html" target="_blank" rel="noopener">
+        <div class="resource-icon icon-blue">🔍</div>
+        <div class="resource-body">
+          <div class="resource-title">PMD Apex Security Rules</div>
+          <div class="resource-desc">Static analysis rules that detect missing CRUD, FLS, and sharing enforcement in Apex code. Integrate into CI/CD to catch regressions automatically.</div>
+          <div class="resource-meta"><span class="badge badge-blue">Static Analysis</span></div>
+        </div>
+        <div class="resource-arrow">↗</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer class="footer">
+  <div class="footer-logo">Apex Security · Summer '26</div>
+  <p style="margin-bottom:8px;">Unofficial learning guide for Salesforce developers · Not affiliated with Salesforce, Inc.</p>
+  <p>
+    <a href="https://help.salesforce.com/s/articleView?id=release-notes.rn_apex_default_user_mode.htm&release=262&type=5" target="_blank">Release Note 1</a>
+    &nbsp;·&nbsp;
+    <a href="https://help.salesforce.com/s/articleView?id=release-notes.rn_apex_removed_withSecurityEnforced.htm&release=262&type=5" target="_blank">Release Note 2</a>
+    &nbsp;·&nbsp;
+    <a href="https://developer.salesforce.com" target="_blank">Salesforce Developers</a>
+  </p>
+</footer>
+
+</div><!-- end .site -->
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
